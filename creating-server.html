@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Как создать сервер</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div><a href="index.html">☚ На базу</a></div>
+    
+    <div>Инициализация проекта и установка библиотеки:</div>
+
+    <div class="codeblock">
+        <div>npm init</div>
+        <div>npm i express pg</div>
+    </div>
+
+    <details>
+        <summary>Подключение модулей и добавление заголовков</summary>
+        <div class="codeblock">
+            <div>const express = require('express');</div>
+            <div>const app = express();</div>
+            <div>const PORT = 3001;</div>
+            <br/>
+            <div>const data_model = require('./data_model');</div>
+            <br/>
+            <div>app.use(express.json());</div>
+            <div>app.use(function(req, res, next) {</div>
+            <div>&emsp;&emsp;res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');</div>
+            <div>&emsp;&emsp;res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');</div>
+            <div>&emsp;&emsp;res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers');</div>
+            <div>&emsp;&emsp;next();</div>
+            <div>});</div>
+            <br/>
+            <div>app.listen(PORT, () => {</div>
+            <div>    &emsp;&emsp;console.log(`App running on port ${PORT}.`);</div>
+            <div>});</div>
+        </div>
+    </details>
+
+    <details>
+        <summary>Пример части pipeline</summary>
+        <div class="codeblock">
+            <div>app.post('/merchants', (req, res) => {</div>
+                <div>&emsp;&emsp;merchant_model.createMerchant(req.body)</div>
+                <div>&emsp;&emsp;.then(response => res.status(200).send(response))</div>
+                <div>&emsp;&emsp;.catch(error => {</div>
+                <div>&emsp;&emsp;&emsp;&emsp;res.status(500).send(error);</div>
+                <div>&emsp;&emsp;});</div>
+                <div>});</div>
+        </div>
+    </details>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройка проекта и БД</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div><a href="index.html">☚ На базу</a></div>
+
+    <div>На диске требуется создать две папки для клиента и для сервера.</div>
+
+    <div>При этом используются порты:</div>
+
+    <li>3000 – для клиента</li>
+    <li>3001 – для сервера</li>
+    <li>5432 – для пула</li>
+
+    <div style="text-align: center;">***</div>
+
+    <div>Команды для входа в БД из-под пользователя и выхода:</div>
+
+    <div class="codeblock">
+        <div>psql -d db_name -U user_name</div>
+        <div>\q</div>
+    </div>
+
+    <div>Создание роли и добавление прав (последнее только после создания новой базы):</div>
+
+    <div class="codeblock">
+        <div>CREATE ROLE user_name WITH LOGIN PASSWORD user_password;</div>
+        <div>ALTER ROLE role_name CREATEDB;</div>
+        <div>GRANT ALL ON DATABASE db_name TO user_name;</div>
+    </div>
+
+    <div>Пример создания новой таблицы:</div>
+
+    <div class="codeblock">
+        <div>CREATE TABLE merchants(id SERIAL PRIMARY KEY, name VARCHAR(30), email VARCHAR(30));</div>
+    </div>
+
+    <div>Точка с запятой после команд ОБЯЗАТЕЛЬНА.</div>
+</body>
+</html>

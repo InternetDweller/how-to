@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Как создать клиент</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div><a href="index.html">☚ На базу</a></div>
+
+    <div>В папке <span class="codesnippet">client-side</span> создать приложение на React:</div>
+
+    <div class="codeblock">npx create-react-app client-side</div>
+
+    <div>Удалить содержимое папки <span class="codesnippet">src/</span>. Создать файлы <span class="codesnippet">index.js</span> и <span class="codesnippet">App.js</span>.</div>
+
+    <details>
+        <summary>В <span class="codesnippet">index.js</span> написать код для рендеринга приложения (по новому стандарту React).</summary>
+        <div class="codeblock">
+            <div>//index.js</div>
+            <div>import React from 'react';</div>
+            <div>import ReactDOM from 'react-dom/client';</div>
+            <div>import App from './App';</div>
+            <br/>
+            <div>ReactDOM.createRoot(document.querySelector('#root')).render(<App/>);</div>
+        </div>
+    </details>
+
+    <div>В <span class="codesnippet">App.js</span> написать функции, которые ходят по маршрутам из pipeline сервера. Получение данных сначала вызывается через useEffect и записывает данные в состояние. Для остальных функций обязательно указание метода, заголовка и тела с json-данными; а в конце они вызывают получение данных.</div>
+
+    <details>
+        <summary>Пример GET-запроса</summary>
+        <div class="codeblock">
+            <div>function getObjects() {</div>
+            <div>&emsp;&emsp;fetch('http://localhost:3001')</div>
+            <div>&emsp;&emsp;.then(response => {</div>
+            <div>&emsp;&emsp;&emsp;&emsp;return response.text();</div>
+            <div>&emsp;&emsp;})</div>
+            <div>&emsp;&emsp;.then(data => setState(data));</div>
+            <div>};</div>
+        </div>
+    </details>
+
+    <details>
+        <summary>Пример POST-запроса</summary>
+        <div class="codeblock">
+            <div>function createObject() {</div>
+                <div>&emsp;&emsp;let name, email;</div>
+                <div>&emsp;&emsp;fetch('http://localhost:3001/objects', {</div>
+                <div>&emsp;&emsp;&emsp;&emsp;method: 'POST',</div>
+                <div>&emsp;&emsp;&emsp;&emsp;headers: { 'Content-Type': 'application/json' },</div>
+                <div>&emsp;&emsp;&emsp;&emsp;body: JSON.stringify({name, email})</div>
+                <div>&emsp;&emsp;})</div>
+                <div>&emsp;&emsp;.then(response => { return response.text(); })</div>
+                <div>&emsp;&emsp;.then(data => {</div>
+                <div>&emsp;&emsp;&emsp;&emsp;alert(data);</div>
+                <div>&emsp;&emsp;&emsp;&emsp;getState();</div>
+                <div>&emsp;&emsp;});</div>
+                <div>};</div>
+        </div>
+    </details>
+
+    <details>
+        <summary>Пример PUT-запроса</summary>
+        <div class="codeblock">
+            <div>function updateObject() {</div>
+                <div>&emsp;&emsp;let id, name, email;</div>
+                <div>&emsp;&emsp;fetch(`http://localhost:3001/objects`, {</div>
+                <div>&emsp;&emsp;&emsp;&emsp;method: 'PUT',</div>
+                <div>&emsp;&emsp;&emsp;&emsp;headers: { 'Content-Type': 'application/json' },</div>
+                <div>&emsp;&emsp;&emsp;&emsp;body: JSON.stringify({id, name, email})</div>
+                <div>&emsp;&emsp;})</div>
+                <div>&emsp;&emsp;.then(response => { return response.text(); })</div>
+                <div>&emsp;&emsp;.then(data => {</div>
+                <div>&emsp;&emsp;&emsp;&emsp;alert(data);</div>
+                <div>&emsp;&emsp;&emsp;&emsp;getObjects();</div>
+                <div>&emsp;&emsp;});</div>
+                <div>};</div>
+        </div>
+    </details>
+
+    <details>
+        <summary>Пример DELETE-запроса</summary>
+        <div class="codeblock">
+            <div>function deleteObject() {</div>
+                <div>&emsp;&emsp;let id;</div>
+                <div>&emsp;&emsp;fetch(`http://localhost:3001/objects/${id}`, {</div>
+                <div>&emsp;&emsp;&emsp;&emsp;method: 'DELETE'</div>
+                <div>&emsp;&emsp;})</div>
+                <div>&emsp;&emsp;.then(response => { return response.text(); })</div>
+                <div>&emsp;&emsp;.then(data => {</div>
+                <div>&emsp;&emsp;&emsp;&emsp;alert(data);</div>
+                <div>&emsp;&emsp;&emsp;&emsp;getObjects();</div>
+                <div>&emsp;&emsp;});</div>
+                <div>};</div>
+        </div>
+    </details>
+</body>
+</html>
