@@ -3,6 +3,27 @@ div {
     margin-bottom: 10px;
 }
 
+.base-header {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.base-header::before {
+    content: '• ';
+}
+
+.external::after {
+    content: '↗';
+    font-weight: bold;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.arrow {
+    font-weight: bold;
+    text-decoration: none !important;
+}
+
 .codeblock {
     background-color: beige;
     margin: 5px 0 5px 0;
@@ -15,4 +36,10 @@ div {
     background-color: beige;
     font-family: 'Courier New', Courier, monospace;
     font-size: 14px;
+}
+
+.divider {
+    border-top: 3px solid grey;
+    border-radius: 5px;
+    margin: 10px 20px 10px 20px;
 }
