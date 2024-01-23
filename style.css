@@ -32,6 +32,10 @@ div {
     font-size: 14px;
 }
 
+.codeblock div {
+    margin: 0;
+}
+
 .codesnippet {
     background-color: beige;
     font-family: 'Courier New', Courier, monospace;

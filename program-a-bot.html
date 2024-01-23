@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Как запрограммировать бота</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div><a href="index.html">☚ На базу</a></div>
+    <div>Начало диалога</div>
+    <div>Приветственный текст и переброска на сценарий меню.</div>
+    
+    <hr class="divider">
+
+    <div>Меню</div>
+    <div>Отображение списка вариантов (фиксированного) и просьба ввести цифру пункта.</div>
+    <details>
+        <summary>Условие</summary>
+        <div>Если выполняется, запускать скрипт. Если нет, попросить выбрать нужное и повторить вопрос.</div>
+        <div class="codeblock">
+            <div>const menuButton = lead.getAttr('menuButton');</div>
+            <div>return (menuButton === '1' || menuButton === '2' || menuButton === '3' || menuButton === '4');</div>
+        </div>
+    </details>
+    <details>
+        <summary>Скрипт</summary>
+        <div class="codeblock">
+            <div>const menuButton = lead.getAttr('menuButton');</div>
+            <br>
+            <div>switch (menuButton) {</div>
+            <div>&emsp;&emsp;case '1':</div>
+            <div>&emsp;&emsp;&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('О магазине'), lead.getData('id'), null, true);</div>
+            <div>&emsp;&emsp;&emsp;&emsp;break;</div>
+            <div>&emsp;&emsp;case '2':</div>
+            <div>&emsp;&emsp;&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Каталог'), lead.getData('id'), null, true);</div>
+            <div>&emsp;&emsp;&emsp;&emsp;break;</div>
+            <div>&emsp;&emsp;case '3':</div>
+            <div>&emsp;&emsp;&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Оформить заказ (1)'), lead.getData('id'), null, true);</div>
+            <div>&emsp;&emsp;&emsp;&emsp;break;</div>
+            <div>&emsp;&emsp;case '4':</div>
+            <div>&emsp;&emsp;&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Очистить корзину'), lead.getData('id'), null, true);</div>
+            <div>&emsp;&emsp;&emsp;&emsp;break;</div>
+            <div>};</div>
+        </div>
+    </details>
+    
+    <hr class="divider">
+
+    <div>О магазине</div>
+    <div>Показ информации о магазине и вызов меню.</div>
+    
+    <hr class="divider">
+
+    <div>Каталог</div>
+    <div>Скрипт отображения списка категорий, просьба ввести цифру категории, скрипт выборки товаров.</div>
+    <details>
+        <summary>Скрипт</summary>
+        <div class="codeblock">
+            <div>let str = 'Доступные категории товаров:\n\n0. Вернуться в меню\n';</div>
+            <div>const categories = table.find('categories');</div>
+            <br>
+            <div>lead.setAttr('categoriesLen', categories.length);</div>
+            <br>
+            <div>categories.forEach((item, i) => {</div>
+            <div>&emsp;&emsp;str += `${i + 1}. ${item.category}\n`;</div>
+            <div>});</div>
+            <br>
+            <div>bot.sendText(str);</div>
+        </div>
+    </details>
+    <details>
+        <summary>Скрипт</summary>
+        <div class="codeblock">
+            <div>const categoryNum = parseInt(lead.getAttr('categoryNum'));</div>
+            <br>
+            <div>if (categoryNum === 0) {</div>
+            <div>&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Меню'), lead.getData('id'), null, true);</div>
+            <div>} else if (categoryNum < 0 || categoryNum > lead.getAttr('categoriesLen')) {</div>
+            <div>&emsp;&emsp;bot.sendText('Выберите цифру из указанных выше');</div>
+            <div>&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Каталог'), lead.getData('id'), null, true);</div>
+            <div>} else {</div>
+            <div>&emsp;&emsp;let str = 'Доступные товары:\n\n0. Вернуться к списку категорий\n';</div>
+            <div>&emsp;&emsp;let productsLen = 0; //чтобы передать, сколько товаров оказалось в категории</div>
+            <div>&emsp;&emsp;const products = table.find('products');</div>
+            <div>&emsp;&emsp;products.filter(item => item.category === categoryNum).forEach((item, i) => {</div>
+            <div>&emsp;&emsp;&emsp;&emsp;str += `${i + 1}. ${item.name}\n`;</div>
+            <div>&emsp;&emsp;&emsp;&emsp;productsLen++;</div>
+            <div>&emsp;&emsp;});</div>
+            <div>&emsp;&emsp;lead.setAttr('productsLen', productsLen);</div>
+            <div>&emsp;&emsp;bot.sendText(str);</div>
+            <div>&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Выбор товара из категории'), lead.getData('id'), null, true);</div>
+            <div>};</div>
+        </div>
+    </details>
+    
+    <hr class="divider">
+
+    <div>Оформить заказ (1)</div>
+    <details>
+        <summary>Условие</summary>
+        <div>Если выполняется, попросить заполнить корзину и отправить в меню. Если нет, перебросить на вторую часть сценария.</div>
+        <div class="codeblock">
+            <div>const basket = lead.getAttr('basket');</div>
+            <div>return (basket === null || basket === '{"b":[]}');</div>
+        </div>
+    </details>
+    
+    <hr class="divider">
+
+    <div>Оформить заказ (2)</div>
+    <div>Просьба ввести адрес почты, потом выполнить скрипт, отправить письмо, сообщить лиду об отправке и перейти к меню.</div>
+    <details>
+        <summary>Скрипт</summary>
+        <div class="codeblock">
+            <div>let emailText = '';</div>
+            <div>const products = table.find('products');</div>
+            <div>const basket = JSON.parse(lead.getAttr('basket')).b;</div>
+            <br>
+            <div>basket.forEach(item => {</div>
+            <div>&emsp;&emsp;products.forEach(element => {</div>
+            <div>&emsp;&emsp;&emsp;&emsp;if (element.id === parseInt(item)) { emailText += `${element.name}`; };</div>
+            <div>&emsp;&emsp;});</div>
+            <div>});</div>
+            <br>
+            <div>lead.setAttr('emailText', emailText);</div>
+        </div>
+    </details>
+    
+    <hr class="divider">
+
+    <div>Очистить корзину</div>
+    <div>Выполнить скрипт и перейти в меню.</div>
+    <details>
+        <summary>Скрипт</summary>
+        <div class="codeblock">
+            <div>lead.setAttr('basket', JSON.stringify({"b":[]}));</div>
+            <div>bot.sendText('Корзина очищена');</div>
+        </div>
+    </details>
+    
+    <hr class="divider">
+
+    <div>Выбор товара из категории</div>
+    <div>Попросить ввести номер товара и выполнить скрипт.</div>
+    <details>
+        <summary>Скрипт</summary>
+        <div class="codeblock">
+            <div>const categoryNum = parseInt(lead.getAttr('categoryNum'));</div>
+            <div>const productNum = parseInt(lead.getAttr('productNum'));</div>
+            <br>
+            <div>if (productNum === 0) {</div>
+            <div>&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Каталог'), lead.getData('id'), null, true);</div>
+            <div>} else if (productNum < 0 || productNum > lead.getAttr('productsLen')) {</div>
+            <div>&emsp;&emsp;bot.sendText('Выберите цифру из указанных выше');</div>
+            <div>&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Выбор товара из категории'), lead.getData('id'), null, true);</div>
+            <div>} else {</div>
+            <div>&emsp;&emsp;//из прошлой выборки взять элемент, где цифра совпадает с номером товара</div>
+            <div>&emsp;&emsp;const products = table.find('products');</div>
+            <div>&emsp;&emsp;products.filter(item => item.category === categoryNum).forEach((element, el) => {</div>
+            <div>&emsp;&emsp;&emsp;&emsp;if (el === productNum - 1) {</div>
+            <div>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bot.sendText(element.image);</div>
+            <div>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bot.sendText(`${element.name}\n\n${element.details}`);</div>
+            <div>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;lead.setAttr('currentProduct', element.id);//сохранение ID просматриваемого товара для добавления в заказ</div>
+            <div>&emsp;&emsp;&emsp;&emsp;};</div>
+            <div>&emsp;&emsp;});</div>
+            <div>&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Добавить в заказ'), lead.getData('id'), null, true);</div>
+            <div>};</div>
+        </div>
+    </details>
+    
+    <hr class="divider">
+
+    <div>Добавить в заказ</div>
+    <div>Попросить ввести цифру варианта (добавлять или нет).</div>
+    <details>
+        <summary>Условие</summary>
+        <div>Если выполняется, запускать скрипт. Если нет, попросить выбрать нужное и повторить вопрос.</div>
+        <div class="codeblock">
+            <div>const addToBasket = lead.getAttr('addToBasket');</div>
+            <div>return (addToBasket === '0' || addToBasket === '1');</div>
+        </div>
+    </details>
+    <details>
+        <summary>Скрипт</summary>
+        <div class="codeblock">
+            <div>const addToBasket = lead.getAttr('addToBasket');</div>
+            <div>const basketStr = lead.getAttr('basket');</div>
+            <div>const currentProduct = lead.getAttr('currentProduct');</div>
+            <div>const basket = {b:[]};</div>
+            <br>
+            <div>if (addToBasket === '0') {</div>
+            <div>&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Выбор товара из категории'), lead.getData('id'), null, true);</div>
+            <div>} else if (addToBasket === '1') {</div>
+            <div>&emsp;&emsp;if (basketStr !== null) { basket.b = JSON.parse(basketStr).b; };</div>
+            <div>&emsp;&emsp;if (!basket.b.includes(currentProduct)) {</div>
+            <div>&emsp;&emsp;&emsp;&emsp;basket.b.push(currentProduct);</div>
+            <div>&emsp;&emsp;&emsp;&emsp;lead.setAttr('basket', JSON.stringify(basket));</div>
+            <div>&emsp;&emsp;&emsp;&emsp;bot.sendText('Товар добавлен в заказ');</div>
+            <div>&emsp;&emsp;} else {</div>
+            <div>&emsp;&emsp;&emsp;&emsp;bot.sendText('Этот товар уже есть в заказе');</div>
+            <div>&emsp;&emsp;};</div>
+            <div>&emsp;&emsp;bot.runScriptForLead(bot.getScriptIdByName('Выбор товара из категории'), lead.getData('id'), null, true);</div>
+            <div>};</div>
+        </div>
+    </details>
+
+</body>
+</html>
